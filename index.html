@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Home · Cheminformatics Virtual Laboratory · SRM Tiruchirappalli</title>
+<meta name="description" content="Cheminformatics Virtual Laboratory, Division of Chemistry, SRM Institute of Science and Technology, Tiruchirappalli.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9A%97%EF%B8%8F%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div>
+<nav id="nav"></nav>
+<main>
+
+<section class="hero">
+  <img class="logo" src="assets/img/srm_logo.jpeg" alt="SRM Institute of Science and Technology">
+  <h1><span class="grad">Cheminformatics</span><br>Virtual Laboratory</h1>
+  <p><b>SRM Institute of Science and Technology, Tiruchirappalli</b><br>Faculty of Engineering and Technology · School of Sciences · Division of Chemistry</p>
+  <div class="btns"><a class="btn" href="visualization.html">Open the Lab</a><a class="btn alt" href="theory.html">Read the Theory</a></div>
+</section>
+<section>
+  <h2>Aim</h2>
+  <p class="lead">To develop a foundational understanding of cheminformatics by using computational tools to represent, visualize and analyze chemical structures.</p>
+  <div class="grid">
+    <div class="glass card"><div class="ic">🔤</div><h3>SMILES notation</h3><p>Convert molecules to and from SMILES text strings.</p></div>
+    <div class="glass card"><div class="ic">🧬</div><h3>2D and 3D views</h3><p>Visualize structures as skeletal drawings and rotating 3D models.</p></div>
+    <div class="glass card"><div class="ic">📐</div><h3>Descriptors</h3><p>Molecular weight, LogP, TPSA, HBD, HBA, rotatable bonds and ring count.</p></div>
+    <div class="glass card"><div class="ic">📈</div><h3>Structure–property</h3><p>Compare several molecules side by side and export a CSV table.</p></div>
+  </div>
+</section>
+<section>
+  <h2>What can students <span class="grad">do?</span></h2>
+  <div class="glass panel"><div class="grid">
+    <p class="lead">✅ Enter any SMILES notation</p><p class="lead">✅ Validate molecular structures</p><p class="lead">✅ Generate 2D structures</p>
+    <p class="lead">✅ Generate interactive 3D structures</p><p class="lead">✅ Choose visualization styles</p><p class="lead">✅ Calculate molecular properties</p>
+    <p class="lead">✅ Print or save a molecular report</p><p class="lead">✅ Compare multiple molecules</p><p class="lead">✅ Complete an assessment</p>
+  </div></div>
+</section>
+<section>
+  <h2>Example <span class="grad">molecules</span></h2>
+  <p class="lead">Choose “Open” to load a molecule into the visualization lab.</p>
+  <div class="tablewrap glass"><table><thead><tr><th>Molecule</th><th>SMILES</th><th></th></tr></thead><tbody id="ex"></tbody></table></div>
+</section>
+<section>
+  <div class="glass panel" style="text-align:center">
+    <h2>Developed by</h2>
+    <p class="lead"><b>Dr. R. Subramanian</b><br>Assistant Professor<br>Division of Chemistry, School of Sciences<br>Faculty of Engineering and Technology<br>SRM Institute of Science and Technology, Tiruchirappalli</p>
+    <a class="btn" href="mailto:rsmani84@gmail.com">📧 rsmani84@gmail.com</a>
+  </div>
+</section>
+
+</main>
+<footer id="foot"></footer>
+<script src="assets/js/chem.js"></script>
+<script src="assets/js/site.js"></script>
+<script>
+
+const tb=document.getElementById('ex');
+Object.entries(Chem.EXAMPLES).forEach(([n,s])=>{
+  const tr=document.createElement('tr');
+  tr.innerHTML='<td>'+n+'</td><td class="mono">'+s+'</td><td><a class="chip" href="visualization.html">Open</a></td>';
+  tr.querySelector('a').onclick=()=>Lab.setSmiles(s);
+  tb.appendChild(tr);
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Molecular Properties · Cheminformatics Virtual Laboratory · SRM Tiruchirappalli</title>
+<meta name="description" content="Cheminformatics Virtual Laboratory, Division of Chemistry, SRM Institute of Science and Technology, Tiruchirappalli.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9A%97%EF%B8%8F%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div>
+<nav id="nav"></nav>
+<main>
+
+<section>
+  <h1>Molecular <span class="grad">Properties</span> Report</h1>
+  <p class="lead" style="margin-top:12px">Descriptors are calculated in your browser. Molecular weight, ring count, HBD, HBA, rotatable bonds and TPSA are computed directly; LogP is an estimate unless the molecule is one of the six course examples.</p>
+  <div class="glass panel">
+    <label class="f" for="smi">SMILES</label><input type="text" id="smi" spellcheck="false" autocomplete="off">
+    <div id="status" class="status ok">…</div>
+    <div class="cols">
+      <div class="view"><span class="tag">2D STRUCTURE</span><canvas id="c2"></canvas></div>
+      <div>
+        <h3>📊 Important properties</h3>
+        <div class="props" id="props" style="margin-top:8px"></div>
+      </div>
+    </div>
+  </div>
+</section>
+<section>
+  <h2>📑 Complete property <span class="grad">table</span></h2>
+  <div class="tablewrap glass"><table><thead><tr><th>Property</th><th>Value</th><th>Note</th></tr></thead><tbody id="tbl"></tbody></table></div>
+  <div class="btns" style="margin-top:18px"><button class="btn" id="csv">⬇️ Download CSV</button><a class="btn alt" href="report.html">Make final report</a></div>
+</section>
+<section>
+  <h2>🧠 Interpretation</h2>
+  <div class="glass panel"><ul id="interp" style="padding-left:20px;line-height:1.9;color:var(--sub)"></ul></div>
+</section>
+
+</main>
+<footer id="foot"></footer>
+<script src="assets/js/chem.js"></script>
+<script src="assets/js/site.js"></script>
+<script>
+
+const $=s=>document.querySelector(s);
+const v=Chem.Viewer($('#c2'),null);
+const inp=$('#smi');inp.value=Lab.smiles();let rows=[];
+function upd(){
+  const st=$('#status');
+  try{const m=Chem.parse(inp.value);v.set(m);Lab.setSmiles(inp.value.trim());const d=Chem.descriptors(m);
+    st.className='status ok';st.textContent='✅ Valid molecular structure'+(d.exact?' · LogP and TPSA are reference values':' · LogP is an estimate');
+    $('#props').innerHTML=[['MOL. WEIGHT',d.mw.toFixed(2)],['LOGP',d.logp.toFixed(2)],['TPSA',d.tpsa.toFixed(2)],['HBD',d.hbd],['HBA',d.hba],['ROT. BONDS',d.rot],['RINGS',d.rings]].map(([a,b])=>'<div><small>'+a+'</small><b>'+b+'</b></div>').join('');
+    rows=[['Molecular Formula',d.formula,''],['Molecular Weight (g/mol)',d.mw.toFixed(3),'sum of atomic masses incl. implicit H'],
+      ['LogP',d.logp.toFixed(3),d.exact?'Crippen reference value':'estimate (fragment model)'],['TPSA (Å²)',d.tpsa.toFixed(2),d.exact?'reference value':'N/O polar surface contributions'],
+      ['H-Bond Donors',d.hbd,'N or O atoms carrying H'],['H-Bond Acceptors',d.hba,'count of N and O atoms'],['Rotatable Bonds',d.rot,'acyclic single bonds between non-terminal atoms'],
+      ['Ring Count',d.rings,''],['Heavy Atoms',d.heavy,''],['Hydrogens',d.hydrogens,'implicit + explicit'],['Bonds (heavy-atom)',d.bonds,'']];
+    $('#tbl').innerHTML=rows.map(r=>'<tr><td>'+r[0]+'</td><td class="mono">'+r[1]+'</td><td style="color:var(--sub)">'+r[2]+'</td></tr>').join('');
+    $('#interp').innerHTML=Chem.interpret(d).map(t=>'<li>'+t+'</li>').join('');
+  }catch(e){st.className='status bad';st.textContent='❌ Invalid SMILES notation: '+e.message;v.set(null);rows=[]}
+}
+inp.addEventListener('input',upd);
+$('#csv').onclick=()=>{if(!rows.length)return;
+  const csv='Property,Value\n'+rows.map(r=>'"'+r[0]+'","'+r[1]+'"').join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='molecular_properties.csv';a.click()};
+upd();
+
+</script>
+</body>
+</html>

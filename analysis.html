@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Structure–Property Analysis · Cheminformatics Virtual Laboratory · SRM Tiruchirappalli</title>
+<meta name="description" content="Cheminformatics Virtual Laboratory, Division of Chemistry, SRM Institute of Science and Technology, Tiruchirappalli.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9A%97%EF%B8%8F%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div>
+<nav id="nav"></nav>
+<main>
+
+<section>
+  <h1>Structure–Property <span class="grad">Analysis</span></h1>
+  <p class="lead" style="margin-top:12px">Compare the properties of multiple molecules. Enter one molecule per line in the format <code class="mono">Molecule Name, SMILES</code>.</p>
+  <div class="glass panel">
+    <label class="f" for="inp">Enter molecules</label>
+    <textarea id="inp" spellcheck="false">Ethanol,CCO
+Benzene,c1ccccc1
+Phenol,Oc1ccccc1
+Acetic Acid,CC(=O)O
+Aspirin,CC(=O)Oc1ccccc1C(=O)O</textarea>
+    <div id="status" class="status ok">…</div>
+  </div>
+</section>
+<section>
+  <h2>📋 Comparison <span class="grad">table</span></h2>
+  <div class="tablewrap glass"><table><thead><tr><th>Molecule</th><th>MW</th><th>LogP</th><th>TPSA</th><th>HBD</th><th>HBA</th><th>Rot. bonds</th><th>Rings</th></tr></thead><tbody id="tb"></tbody></table></div>
+  <div class="btns" style="margin-top:18px"><button class="btn" id="csv">⬇️ Download Comparison Table (CSV)</button></div>
+</section>
+<section>
+  <h2>Molecular weight <span class="grad">chart</span></h2>
+  <div class="glass panel"><div id="bars"></div></div>
+</section>
+
+</main>
+<footer id="foot"></footer>
+<script src="assets/js/chem.js"></script>
+<script src="assets/js/site.js"></script>
+<script>
+
+const $=s=>document.querySelector(s);let rows=[];
+function upd(){
+  rows=[];const bad=[];
+  $('#inp').value.split(/\r?\n/).forEach(l=>{
+    if(!l.includes(','))return;
+    const i=l.indexOf(','),name=l.slice(0,i).trim(),smi=l.slice(i+1).trim();
+    try{const d=Chem.descriptors(Chem.parse(smi));rows.push({name,smi,d})}catch(e){bad.push(name||smi)}});
+  const st=$('#status');
+  if(!rows.length){st.className='status bad';st.textContent='Please enter at least one valid molecule in the format: Molecule Name, SMILES'}
+  else if(bad.length){st.className='status bad';st.textContent='Skipped invalid SMILES for: '+bad.join(', ')}
+  else{st.className='status ok';st.textContent='✅ '+rows.length+' molecules analysed'}
+  $('#tb').innerHTML=rows.map(r=>'<tr><td>'+r.name+'</td><td>'+r.d.mw.toFixed(2)+'</td><td>'+r.d.logp.toFixed(2)+'</td><td>'+r.d.tpsa.toFixed(2)+'</td><td>'+r.d.hbd+'</td><td>'+r.d.hba+'</td><td>'+r.d.rot+'</td><td>'+r.d.rings+'</td></tr>').join('');
+  const mx=Math.max(1,...rows.map(r=>r.d.mw));
+  $('#bars').innerHTML=rows.map(r=>'<div style="display:flex;align-items:center;gap:12px;margin:8px 0"><span style="width:120px;font-size:.9rem">'+r.name+'</span><div style="flex:1;background:var(--canvas);border-radius:999px;overflow:hidden"><div style="width:'+(r.d.mw/mx*100)+'%;padding:6px 12px;background:linear-gradient(90deg,var(--a),var(--c),var(--d));font-size:.8rem;font-weight:700;color:#fff;white-space:nowrap">'+r.d.mw.toFixed(1)+'</div></div></div>').join('');
+}
+$('#inp').addEventListener('input',upd);
+$('#csv').onclick=()=>{if(!rows.length)return;
+  const csv='Molecule,MW,LogP,TPSA,HBD,HBA,Rotatable Bonds,Ring Count\n'+rows.map(r=>[r.name,r.d.mw.toFixed(3),r.d.logp.toFixed(3),r.d.tpsa.toFixed(2),r.d.hbd,r.d.hba,r.d.rot,r.d.rings].join(',')).join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='structure_property_comparison.csv';a.click()};
+upd();
+
+</script>
+</body>
+</html>

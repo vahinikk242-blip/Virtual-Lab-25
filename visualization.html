@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Molecular Visualization · Cheminformatics Virtual Laboratory · SRM Tiruchirappalli</title>
+<meta name="description" content="Cheminformatics Virtual Laboratory, Division of Chemistry, SRM Institute of Science and Technology, Tiruchirappalli.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9A%97%EF%B8%8F%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div>
+<nav id="nav"></nav>
+<main>
+
+<section>
+  <h1>Molecular <span class="grad">Visualization</span> Laboratory</h1>
+  <p class="lead" style="margin-top:12px">Enter a new SMILES or load an example. The selected molecule is used across the laboratory pages.</p>
+  <div class="glass panel">
+    <div class="row">
+      <div style="flex:2"><label class="f" for="smi">Enter SMILES</label><input type="text" id="smi" spellcheck="false" autocomplete="off"></div>
+      <div><label class="f" for="exsel">Example molecule</label><select id="exsel"><option>Ethanol</option><option>Benzene</option><option>Phenol</option><option>Acetic Acid</option><option>Aspirin</option><option>Caffeine</option></select></div>
+      <div style="flex:0 0 auto;min-width:0;align-self:end"><button class="btn" id="load">Load Example</button></div>
+    </div>
+    <div id="status" class="status ok">…</div>
+    <div class="chips" id="styles"><span class="f" style="margin:8px 6px 0 0;font-size:.8rem;font-weight:700;letter-spacing:1px;color:var(--sub)">3D STYLE</span></div>
+    <div class="cols">
+      <div class="view"><span class="tag">2D STRUCTURE</span><canvas id="c2"></canvas></div>
+      <div class="view"><span class="tag">3D STRUCTURE</span><canvas id="c3"></canvas><span class="hint">drag to rotate</span></div>
+    </div>
+    <div class="props" id="props"></div>
+  </div>
+</section>
+
+</main>
+<footer id="foot"></footer>
+<script src="assets/js/chem.js"></script>
+<script src="assets/js/site.js"></script>
+<script>
+
+const $=s=>document.querySelector(s);
+const v=Chem.Viewer($('#c2'),$('#c3'));
+const inp=$('#smi');inp.value=Lab.smiles();
+const STY=[['ballstick','Ball and Stick'],['stick','Stick'],['spacefill','Space Filling'],['wire','Wireframe']];
+STY.forEach(([k,t],i)=>{const b=document.createElement('button');b.className='chip'+(i?'':' on');b.textContent=t;
+  b.onclick=()=>{v.style=k;document.querySelectorAll('#styles .chip').forEach(x=>x.classList.remove('on'));b.classList.add('on')};$('#styles').appendChild(b)});
+function upd(){
+  const st=$('#status');
+  try{const m=Chem.parse(inp.value);v.set(m);Lab.setSmiles(inp.value.trim());
+    const d=Chem.descriptors(m);st.className='status ok';st.textContent='✅ Valid molecular structure';
+    $('#props').innerHTML=[['FORMULA',d.formula],['MOL. WEIGHT',d.mw.toFixed(2)+' g/mol'],['HEAVY ATOMS',d.heavy],['BONDS',d.bonds],['RINGS',d.rings]].map(([a,b])=>'<div><small>'+a+'</small><b>'+b+'</b></div>').join('');
+  }catch(e){st.className='status bad';st.textContent='❌ Invalid SMILES notation: '+e.message;v.set(null);$('#props').innerHTML=''}
+}
+inp.addEventListener('input',()=>{const k=Object.keys(Chem.EXAMPLES).find(n=>Chem.EXAMPLES[n]===inp.value.trim());if(k)$('#exsel').value=k;upd()});
+$('#load').onclick=()=>{inp.value=Chem.EXAMPLES[$('#exsel').value];upd()};
+{ const k=Object.keys(Chem.EXAMPLES).find(n=>Chem.EXAMPLES[n]===inp.value.trim());if(k)$('#exsel').value=k }
+upd();
+
+</script>
+</body>
+</html>

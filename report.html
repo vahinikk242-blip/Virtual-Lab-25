@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Final Report · Cheminformatics Virtual Laboratory · SRM Tiruchirappalli</title>
+<meta name="description" content="Cheminformatics Virtual Laboratory, Division of Chemistry, SRM Institute of Science and Technology, Tiruchirappalli.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9A%97%EF%B8%8F%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div>
+<nav id="nav"></nav>
+<main>
+
+<section>
+  <h1>Final Student <span class="grad">Molecular Analysis</span> Report</h1>
+  <p class="lead noprint" style="margin-top:12px">Enter your details and a SMILES string, generate the report, then print it or save it as a PDF.</p>
+  <div class="glass panel noprint">
+    <div class="row">
+      <div><label class="f" for="nm">Student name</label><input type="text" id="nm" autocomplete="name"></div>
+      <div><label class="f" for="rg">Registration number</label><input type="text" id="rg"></div>
+      <div style="flex:2"><label class="f" for="smi">SMILES</label><input type="text" id="smi" spellcheck="false" autocomplete="off"></div>
+    </div>
+    <div id="status" class="status ok">…</div>
+    <div class="btns" style="justify-content:flex-start"><button class="btn" id="gen">Generate Report</button><button class="btn alt hide" id="prt">🖨️ Print / Save as PDF</button></div>
+  </div>
+</section>
+<section id="rep" class="hide">
+  <div class="glass panel">
+    <div style="text-align:center"><img src="assets/img/srm_logo.jpeg" alt="SRM" style="height:70px;border-radius:10px;background:#fff;padding:3px">
+      <h2 style="margin-top:10px">Cheminformatics Virtual Laboratory</h2>
+      <p class="lead">Molecular Analysis Report</p></div>
+    <div class="props"><div><small>STUDENT</small><b id="rn">–</b></div><div><small>REG. NO.</small><b id="rr">–</b></div><div><small>DATE</small><b id="rd">–</b></div><div><small>SMILES</small><b id="rs" class="mono">–</b></div></div>
+    <div class="cols" style="margin-top:18px">
+      <div class="view"><span class="tag">2D STRUCTURE</span><canvas id="c2"></canvas></div>
+      <div class="view"><span class="tag">3D STRUCTURE</span><canvas id="c3"></canvas></div>
+    </div>
+    <h3 style="margin-top:22px">Molecular properties</h3>
+    <div class="tablewrap"><table><tbody id="tbl"></tbody></table></div>
+    <h3 style="margin-top:22px">Interpretation</h3>
+    <ul id="interp" style="padding-left:20px;line-height:1.9"></ul>
+    <p class="lead" style="margin-top:16px;font-size:.85rem" id="note"></p>
+  </div>
+</section>
+
+</main>
+<footer id="foot"></footer>
+<script src="assets/js/chem.js"></script>
+<script src="assets/js/site.js"></script>
+<script>
+
+const $=s=>document.querySelector(s);
+const v=Chem.Viewer($('#c2'),$('#c3'));
+$('#nm').value=Lab.store.get('name','');$('#rg').value=Lab.store.get('reg','');$('#smi').value=Lab.smiles();
+$('#gen').onclick=()=>{
+  const st=$('#status');
+  try{const m=Chem.parse($('#smi').value);const d=Chem.descriptors(m);
+    Lab.store.set('name',$('#nm').value);Lab.store.set('reg',$('#rg').value);Lab.setSmiles($('#smi').value.trim());
+    st.className='status ok';st.textContent='✅ Report generated below';
+    $('#rep').classList.remove('hide');$('#prt').classList.remove('hide');
+    $('#rn').textContent=$('#nm').value||'–';$('#rr').textContent=$('#rg').value||'–';$('#rd').textContent=new Date().toLocaleDateString();$('#rs').textContent=$('#smi').value.trim();
+    v.set(m);
+    const rows=[['Molecular Formula',d.formula],['Molecular Weight (g/mol)',d.mw.toFixed(3)],['LogP',d.logp.toFixed(3)],['TPSA (Å²)',d.tpsa.toFixed(2)],['H-Bond Donors',d.hbd],['H-Bond Acceptors',d.hba],['Rotatable Bonds',d.rot],['Ring Count',d.rings]];
+    $('#tbl').innerHTML=rows.map(r=>'<tr><td>'+r[0]+'</td><td class="mono">'+r[1]+'</td></tr>').join('');
+    $('#interp').innerHTML=Chem.interpret(d).map(t=>'<li>'+t+'</li>').join('');
+    $('#note').textContent=d.exact?'LogP and TPSA are reference values for this course example.':'LogP is a fragment-based estimate and values are approximate. Use RDKit for publication-grade numbers.';
+    $('#rep').scrollIntoView({behavior:'smooth'});
+  }catch(e){st.className='status bad';st.textContent='❌ Invalid SMILES notation: '+e.message}
+};
+$('#prt').onclick=()=>window.print();
+
+</script>
+</body>
+</html>

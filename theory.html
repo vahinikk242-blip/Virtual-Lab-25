@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Theory · Cheminformatics Virtual Laboratory · SRM Tiruchirappalli</title>
+<meta name="description" content="Cheminformatics Virtual Laboratory, Division of Chemistry, SRM Institute of Science and Technology, Tiruchirappalli.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9A%97%EF%B8%8F%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div>
+<nav id="nav"></nav>
+<main>
+
+<section class="theory">
+  <h1><span class="grad">Introduction</span> to Cheminformatics</h1>
+  <p class="lead" style="margin-top:14px">The concepts behind the lab, in four short ideas.</p>
+  <div class="grid">
+    <div class="glass card"><div class="ic">⚗️</div><h3>What is cheminformatics?</h3>
+      <p>Cheminformatics combines chemistry ⚗️, computer science 💻 and data analysis 📊. It uses computational techniques to store, process, visualize and analyze chemical information.</p></div>
+    <div class="glass card"><div class="ic">🔤</div><h3>SMILES</h3>
+      <p><b>S</b>implified <b>M</b>olecular <b>I</b>nput <b>L</b>ine <b>E</b>ntry <b>S</b>ystem represents a molecular structure as a text string.</p>
+      <div class="tablewrap" style="margin-top:10px"><table><tr><td>Ethanol</td><td class="mono">CCO</td></tr><tr><td>Benzene</td><td class="mono">c1ccccc1</td></tr><tr><td>Acetic Acid</td><td class="mono">CC(=O)O</td></tr></table></div></div>
+    <div class="glass card"><div class="ic">📐</div><h3>Molecular descriptors</h3>
+      <p>Descriptors give numerical information about a structure.</p>
+      <ul><li>Molecular Weight</li><li>LogP</li><li>TPSA</li><li>Hydrogen Bond Donors</li><li>Hydrogen Bond Acceptors</li><li>Rotatable Bonds</li></ul></div>
+    <div class="glass card"><div class="ic">🧊</div><h3>3D molecular models</h3>
+      <p>Different models help students understand molecular geometry.</p>
+      <ul><li>🟢 <b>Ball and Stick</b>: atoms as spheres, bonds as sticks</li><li>🟡 <b>Stick</b>: emphasizes chemical bonding</li><li>🔵 <b>Space Filling</b>: approximate molecular volume</li><li>⚫ <b>Wireframe</b>: simplified representation</li></ul></div>
+  </div>
+</section>
+<section>
+  <h2>SMILES <span class="grad">cheat sheet</span></h2>
+  <div class="grid">
+    <div class="glass card"><h3>Atoms</h3><p>Write the symbol: C, N, O, S, P, F, Cl, Br, I. Hydrogens are implied.</p></div>
+    <div class="glass card"><h3>Bonds</h3><p>Single is implied. Use = for double and # for triple.</p></div>
+    <div class="glass card"><h3>Branches</h3><p>Parentheses attach a side chain to the preceding atom, as in CC(C)O.</p></div>
+    <div class="glass card"><h3>Rings and aromatic atoms</h3><p>Matching digits close a ring. Lowercase letters mark aromatic atoms, as in c1ccccc1.</p></div>
+  </div>
+  <div class="btns" style="margin-top:26px"><a class="btn" href="visualization.html">Try it in the lab</a></div>
+</section>
+
+</main>
+<footer id="foot"></footer>
+<script src="assets/js/chem.js"></script>
+<script src="assets/js/site.js"></script>
+<script>
+
+</script>
+</body>
+</html>
